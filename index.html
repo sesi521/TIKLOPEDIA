@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIKLOPEDIA - Ensiklopedia TIK</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#0284c7',
+                        brandBlueDark: '#0369a1',
+                        brandTurquoise: '#0d9488',
+                        brandAmber: '#f59e0b',
+                        brandOrange: '#ea580c',
+                        brandBg: '#f0f9ff'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas and jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f0f9ff;
+            color: #0f172a;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Enforce touch-friendly sizes */
+        .btn-nav, .btn-action, .touch-target {
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 14px 0 rgba(2, 132, 199, 0.10);
+        }
+
+        .card-shadow-hover:hover {
+            box-shadow: 0 8px 25px 0 rgba(2, 132, 199, 0.18);
+            transform: translateY(-2px);
+        }
+
+        /* Aspect ratio 16:9 box for Infographic export */
+        .aspect-16-9 {
+            aspect-ratio: 16 / 9;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0f2fe;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284c7;
+            border-radius: 4px;
+        }
+
+        /* Drag and Drop styling */
+        .draggable-item {
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+            opacity: 0.8;
+        }
+        .drop-zone {
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .drop-zone.drag-over {
+            border-color: #0d9488;
+            background-color: #ccfbf1;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .print-area { display: block !important; width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between antialiased selection:bg-sky-200">
+
+    <!-- TOP HEADER -->
+    <header class="bg-white border-b border-sky-100 shadow-sm sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goToStep(0)">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-teal-500 flex items-center justify-center text-white font-black text-xl shadow">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sky-900 text-lg leading-tight">TIKLOPEDIA</h1>
+                    <p class="text-xs text-teal-600 font-medium">Informatika SMP Kelas VII</p>
+                </div>
+            </div>
+
+            <!-- Global Progress Tracker -->
+            <div id="progress-container" class="hidden md:flex items-center space-x-3 bg-sky-50 px-4 py-1.5 rounded-full border border-sky-100">
+                <span id="progress-text" class="text-xs font-semibold text-sky-800">Langkah 1 dari 14</span>
+                <div class="w-32 bg-sky-200 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-sky-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Top Controls -->
+            <div class="flex items-center space-x-2">
+                <button onclick="goToStep(2)" class="btn-nav bg-sky-100 hover:bg-sky-200 text-sky-800 font-semibold px-3 py-2 rounded-xl text-sm transition-all focus:ring-2 focus:ring-sky-400" title="Menu Utama">
+                    <i class="fa-solid fa-bars mr-1.5"></i> ☰ Menu
+                </button>
+                <button onclick="goToStep(0)" class="btn-nav bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-xl text-sm transition-all focus:ring-2 focus:ring-slate-300" title="Kembali ke Beranda">
+                    <i class="fa-solid fa-house mr-1.5"></i> ⌂ Beranda
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- ================= PAGE 0: OPENING / LAMAN MUKA ================= -->
+        <section id="step-0" class="page-step transition-opacity duration-300">
+            <div class="bg-white rounded-3xl p-6 md:p-10 border border-sky-100 card-shadow text-center relative overflow-hidden">
+                <!-- Decorative Geometric Shapes -->
+                <div class="absolute -top-12 -left-12 w-40 h-40 bg-sky-100 rounded-full blur-2xl opacity-70"></div>
+                <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-teal-100 rounded-full blur-2xl opacity-70"></div>
+
+                <div class="relative z-10 max-w-3xl mx-auto">
+                    <!-- Badge -->
+                    <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 mb-4 tracking-wide uppercase border border-amber-200">
+                        <i class="fa-solid fa-graduation-cap mr-2"></i> Media Pembelajaran Interaktif
+                    </span>
+
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-sky-950 mb-3 tracking-tight">
+                        TIKLOPEDIA
+                    </h1>
+                    <h2 class="text-xl md:text-2xl font-bold text-teal-600 mb-6">
+                        Ensiklopedia TIK: Dulu, Kini, dan Nanti
+                    </h2>
+
+                    <!-- Hero Visual Collage -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-8">
+                        <div class="p-4 bg-sky-50 rounded-2xl border border-sky-100 text-center hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-desktop text-4xl text-sky-600 mb-2"></i>
+                            <p class="text-xs font-bold text-sky-900">Perkakas Komputer</p>
+                        </div>
+                        <div class="p-4 bg-teal-50 rounded-2xl border border-teal-100 text-center hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-mobile-screen-button text-4xl text-teal-600 mb-2"></i>
+                            <p class="text-xs font-bold text-teal-900">Teknologi Ponsel</p>
+                        </div>
+                        <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-center hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-wifi text-4xl text-amber-600 mb-2"></i>
+                            <p class="text-xs font-bold text-amber-900">Jaringan Digital</p>
+                        </div>
+                        <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 text-center hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-robot text-4xl text-indigo-600 mb-2"></i>
+                            <p class="text-xs font-bold text-indigo-900">Masa Depan TIK</p>
+                        </div>
+                    </div>
+
+                    <p class="text-slate-600 text-sm md:text-base leading-relaxed mb-8 max-w-2xl mx-auto">
+                        Media pembelajaran ini membantu peserta didik mengenal perkembangan teknologi informasi dan komunikasi, memahami berbagai jenis perkakas TIK, mengidentifikasi fungsinya, serta memanfaatkannya secara cerdas, aman, dan bijak.
+                    </p>
+
+                    <!-- Identity Box -->
+                    <div class="bg-gradient-to-r from-sky-50 to-teal-50 border border-sky-200 rounded-2xl p-4 mb-8 text-left grid md:grid-cols-3 gap-4 text-xs md:text-sm">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-user-tie text-sky-600 text-xl"></i>
+                            <div>
+                                <span class="text-slate-500 block text-xs">Kreator Media</span>
+                                <strong class="text-slate-800">Sesi Mulyasi, M.Pd.</strong>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-book-open text-teal-600 text-xl"></i>
+                            <div>
+                                <span class="text-slate-500 block text-xs">Mata Pelajaran</span>
+                                <strong class="text-slate-800">Informatika (Fase D)</strong>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-users text-amber-600 text-xl"></i>
+                            <div>
+                                <span class="text-slate-500 block text-xs">Sasaran Belajar</span>
+                                <strong class="text-slate-800">Siswa Kelas VII SMP</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <button onclick="nextStep()" class="btn-action bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white font-extrabold px-8 py-4 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 active:translate-y-0">
+                        MULAI BELAJAR <i class="fa-solid fa-arrow-right ml-3"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 1: PANDUAN BELAJAR ================= -->
+        <section id="step-1" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-compass"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-sky-950">Panduan Penggunaan Media</h2>
+                        <p class="text-xs text-slate-500">Ikuti petunjuk sederhana ini untuk mendapat pengalaman belajar terbaik</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4 my-6">
+                    <div class="flex items-start space-x-4 p-4 rounded-2xl bg-sky-50 border border-sky-100">
+                        <div class="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center flex-shrink-0 font-bold">1</div>
+                        <div>
+                            <h3 class="font-bold text-sky-900 text-sm">Alur Belajar Sistematis</h3>
+                            <p class="text-xs text-slate-600 mt-1">Pelajari materi secara berurutan mulai dari konsep dasar hingga eksplorasi & evaluasi.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4 p-4 rounded-2xl bg-teal-50 border border-teal-100">
+                        <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center flex-shrink-0 font-bold">2</div>
+                        <div>
+                            <h3 class="font-bold text-teal-900 text-sm">Aktivitas Interaktif</h3>
+                            <p class="text-xs text-slate-600 mt-1">Sentuh atau klik kartu, pilihan, dan simulasi untuk menemukan penjelasan mendalam.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4 p-4 rounded-2xl bg-amber-50 border border-amber-100">
+                        <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center flex-shrink-0 font-bold">3</div>
+                        <div>
+                            <h3 class="font-bold text-amber-900 text-sm">Umpan Balik Langsung</h3>
+                            <p class="text-xs text-slate-600 mt-1">Setiap jawaban akan memberikan konfirmasi langsung disertai penjelasan konsepnya.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4 p-4 rounded-2xl bg-indigo-50 border border-indigo-100">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 font-bold">4</div>
+                        <div>
+                            <h3 class="font-bold text-indigo-900 text-sm">Evaluasi & Infografis</h3>
+                            <p class="text-xs text-slate-600 mt-1">Uji pemahaman di akhir sesi dan unduh Ringkasan Infografis dalam bentuk PDF.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-sky-100/70 border border-sky-200 rounded-2xl text-center text-xs md:text-sm text-sky-900 font-semibold">
+                    <i class="fa-solid fa-circle-info mr-2 text-sky-600"></i> Tombol navigasi di bagian bawah siap membantumu berpindah halaman kapan saja!
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: MENU UTAMA / PETA MATERI ================= -->
+        <section id="step-2" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-sky-950">Peta Pembelajaran Linier</h2>
+                        <p class="text-xs text-slate-500">Pilih modul atau gunakan alur berurutan untuk hasil belajar optimal</p>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 bg-teal-100 text-teal-800 rounded-full">Fase D / Kelas 7</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="menu-grid">
+                    <!-- Menu Cards generated dynamically in JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: PERTANYAAN PEMANTIK ================= -->
+        <section id="step-3" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="max-w-3xl mx-auto">
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full uppercase tracking-wider">Refleksi Awal</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-3 mb-4">Bayangkan Situasi Ini!</h2>
+
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 border-l-4 border-amber-500 p-5 rounded-r-2xl mb-6">
+                        <p class="text-base md:text-lg font-medium text-slate-800 italic">
+                            "Bayangkan kamu harus menyelesaikan tugas kelompok sekolah TANPA menggunakan smartphone, laptop, koneksi internet, maupun printer. Apa yang paling berubah dalam proses belajar kalian?"
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <button onclick="checkPemantik(0)" class="option-pemantik w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-semibold text-sm flex items-center justify-between">
+                            <span>A. Proses mencari, mengolah, dan menyampaikan informasi menjadi terbatas & lambat.</span>
+                            <i class="fa-regular fa-circle text-slate-400 text-lg"></i>
+                        </button>
+                        <button onclick="checkPemantik(1)" class="option-pemantik w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-semibold text-sm flex items-center justify-between">
+                            <span>B. Semua pekerjaan tetap berlangsung cepat dengan cara dan alat yang persis sama.</span>
+                            <i class="fa-regular fa-circle text-slate-400 text-lg"></i>
+                        </button>
+                        <button onclick="checkPemantik(2)" class="option-pemantik w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-semibold text-sm flex items-center justify-between">
+                            <span>C. Tidak ada perubahan sama sekali dalam kehidupan kita.</span>
+                            <i class="fa-regular fa-circle text-slate-400 text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Feedback Box -->
+                    <div id="feedback-pemantik" class="hidden p-5 rounded-2xl border text-sm leading-relaxed transition-all duration-300"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: MATERI 1 - KONSEP & PERKAKAS TIK ================= -->
+        <section id="step-4" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="mb-6">
+                    <span class="px-3 py-1 bg-sky-100 text-sky-800 text-xs font-bold rounded-full">Modul 01</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-2">Mengenal Perkakas TIK</h2>
+                    <p class="text-sm text-slate-600 mt-1">
+                        <strong>Perkakas Teknologi Informasi dan Komunikasi (TIK)</strong> adalah segala perangkat keras maupun lunak yang digunakan untuk menerima, mengolah, menyimpan, menyampaikan, atau bertukar informasi.
+                    </p>
+                </div>
+
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Klik atau sentuh perangkat di bawah untuk melihat detail fungsi:</p>
+
+                <!-- Interactive Devices Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="materi1-grid">
+                    <!-- Cards populated via Javascript -->
+                </div>
+
+                <!-- Detail Display Modal / Card -->
+                <div id="device-detail-box" class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-sky-50 to-teal-50 border border-sky-200 flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-6">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-600 text-white flex items-center justify-center text-3xl flex-shrink-0 shadow">
+                        <i id="device-icon" class="fa-solid fa-desktop"></i>
+                    </div>
+                    <div>
+                        <h3 id="device-name" class="font-extrabold text-sky-900 text-lg">Laptop</h3>
+                        <p id="device-desc" class="text-xs md:text-sm text-slate-700 mt-1 leading-relaxed">
+                            Pilih salah satu perangkat di atas untuk mengeksplorasi penjelasan fungsi dan pemanfaatannya.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: MATERI 2 - JENIS-JENIS PERKAKAS & INTERAKSI 1 ================= -->
+        <section id="step-5" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="mb-6">
+                    <span class="px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold rounded-full">Modul 02</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-2">Pengelompokan Jenis Perkakas TIK</h2>
+                    <p class="text-sm text-slate-600 mt-1">Berdasarkan perannya dalam sistem komputer dan sistem komunikasi, perangkat TIK dibagi menjadi 5 kategori utama:</p>
+                </div>
+
+                <!-- Categories Tabs/Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-8">
+                    <div class="p-3 rounded-2xl bg-rose-50 border border-rose-100 text-center">
+                        <div class="w-8 h-8 mx-auto rounded-full bg-rose-500 text-white flex items-center justify-center mb-1 text-xs"><i class="fa-solid fa-keyboard"></i></div>
+                        <h4 class="font-bold text-xs text-rose-900">1. INPUT</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">Memasukkan data/perintah (Keyboard, Mouse, Scanner, Mikrofon)</p>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-amber-50 border border-amber-100 text-center">
+                        <div class="w-8 h-8 mx-auto rounded-full bg-amber-500 text-white flex items-center justify-center mb-1 text-xs"><i class="fa-solid fa-microchip"></i></div>
+                        <h4 class="font-bold text-xs text-amber-900">2. PROCESSING</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">Mengolah data dan logika (CPU, Processor)</p>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-center">
+                        <div class="w-8 h-8 mx-auto rounded-full bg-emerald-500 text-white flex items-center justify-center mb-1 text-xs"><i class="fa-solid fa-print"></i></div>
+                        <h4 class="font-bold text-xs text-emerald-900">3. OUTPUT</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">Menampilkan hasil olahan (Monitor, Printer, Speaker, Proyektor)</p>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-center">
+                        <div class="w-8 h-8 mx-auto rounded-full bg-indigo-500 text-white flex items-center justify-center mb-1 text-xs"><i class="fa-solid fa-hard-drive"></i></div>
+                        <h4 class="font-bold text-xs text-indigo-900">4. STORAGE</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">Menyimpan file & data (Hard disk, SSD, Flashdisk)</p>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-sky-50 border border-sky-100 text-center">
+                        <div class="w-8 h-8 mx-auto rounded-full bg-sky-500 text-white flex items-center justify-center mb-1 text-xs"><i class="fa-solid fa-network-wired"></i></div>
+                        <h4 class="font-bold text-xs text-sky-900">5. JARINGAN</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">Komunikasi data (Router, Modem, Smartphone)</p>
+                    </div>
+                </div>
+
+                <!-- Interaksi 1 Activity -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="px-2.5 py-1 bg-amber-500 text-white font-bold text-xs rounded-lg">Interaksi 1</span>
+                        <h3 class="font-bold text-sky-950 text-sm md:text-base">Tantangan: Klik Perangkat yang Termasuk Alat INPUT!</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4">Pilih perangkat di bawah ini yang bertugas memasukkan data atau instruksi ke komputer:</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="input-challenge-grid">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div id="feedback-interaksi1" class="hidden mt-4 p-4 rounded-xl text-xs md:text-sm font-medium"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 6: MATERI 3 - FUNGSI, MANFAAT & INTERAKSI 2 ================= -->
+        <section id="step-6" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="mb-6">
+                    <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-bold rounded-full">Modul 03</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-2">Fungsi dan Manfaat TIK</h2>
+                    <p class="text-sm text-slate-600 mt-1">Satu perangkat TIK sering kali memiliki fungsi ganda dalam mendukung kehidupan sehari-hari:</p>
+                </div>
+
+                <!-- Infographic 4 Pillars -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="p-4 rounded-2xl bg-sky-50 border border-sky-200">
+                        <i class="fa-solid fa-comments text-sky-600 text-2xl mb-2"></i>
+                        <h4 class="font-bold text-sky-900 text-sm">Komunikasi</h4>
+                        <p class="text-xs text-slate-600 mt-1">Kirim pesan, panggilan video, & surel. (Smartphone, Laptop, Mikrofon)</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200">
+                        <i class="fa-solid fa-book-reader text-teal-600 text-2xl mb-2"></i>
+                        <h4 class="font-bold text-teal-900 text-sm">Pembelajaran</h4>
+                        <p class="text-xs text-slate-600 mt-1">Mencari materi, belajar daring, & presentasi. (Komputer, Proyektor, Internet)</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200">
+                        <i class="fa-solid fa-briefcase text-amber-600 text-2xl mb-2"></i>
+                        <h4 class="font-bold text-amber-900 text-sm">Produktivitas</h4>
+                        <p class="text-xs text-slate-600 mt-1">Membuat dokumen, mengolah data & laporan. (Laptop, Printer, Aplikasi Office)</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-pink-50 border border-pink-200">
+                        <i class="fa-solid fa-gamepad text-pink-600 text-2xl mb-2"></i>
+                        <h4 class="font-bold text-pink-900 text-sm">Hiburan</h4>
+                        <p class="text-xs text-slate-600 mt-1">Mendengarkan musik, gim, & video. (Headset, Speaker, Smartphone)</p>
+                    </div>
+                </div>
+
+                <!-- Interaksi 2: Mencocokkan Perangkat dengan Fungsinya -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="px-2.5 py-1 bg-purple-600 text-white font-bold text-xs rounded-lg">Interaksi 2</span>
+                        <h3 class="font-bold text-sky-950 text-sm md:text-base">Mencocokkan Pasangan Perangkat & Fungsi Utama</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4">Klik perangkat di sebelah kiri, lalu klik fungsi utama yang tepat di sebelah kanan:</p>
+
+                    <div class="grid md:grid-cols-2 gap-6" id="matching-container">
+                        <div class="space-y-2" id="match-devices"></div>
+                        <div class="space-y-2" id="match-functions"></div>
+                    </div>
+
+                    <div id="feedback-interaksi2" class="hidden mt-4 p-4 rounded-xl text-xs md:text-sm font-medium"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 7: MATERI 4 - PERKEMBANGAN TIK & INTERAKSI 3 ================= -->
+        <section id="step-7" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="mb-6">
+                    <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full">Modul 04</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-2">Perkembangan TIK Dari Masa ke Masa</h2>
+                    <p class="text-sm text-slate-600 mt-1">Perkembangan TIK ditandai oleh perubahan bentuk, peningkatan kecepatan, kemampuan, dan kemudahan penggunaan:</p>
+                </div>
+
+                <!-- Visual Timeline -->
+                <div class="relative border-l-4 border-sky-300 ml-4 pl-6 space-y-6 my-6">
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1.5 w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs font-bold">1</div>
+                        <h4 class="font-bold text-sky-900 text-sm">Teknologi Awal & Telepon Kabel</h4>
+                        <p class="text-xs text-slate-600">Komunikasi terbatas pada suara analog menggunakan jaringan kabel antarkota/negara.</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1.5 w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-bold">2</div>
+                        <h4 class="font-bold text-teal-900 text-sm">Komputer Generasi Awal & Ponsel Seluler</h4>
+                        <p class="text-xs text-slate-600">Perangkat fisik komputer berukuran besar, ponselseluler awal mendukung panggilan suara & SMS portabel.</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1.5 w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs font-bold">3</div>
+                        <h4 class="font-bold text-amber-900 text-sm">Era Smartphone & Laptop Tipis</h4>
+                        <p class="text-xs text-slate-600">Perangkat menjadi serbaguna, berukuran ringkas, dan terhubung internet secara konstan.</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1.5 w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">4</div>
+                        <h4 class="font-bold text-indigo-900 text-sm">Perangkat Cerdas Masa Depan (IoT & AI)</h4>
+                        <p class="text-xs text-slate-600">Perangkat saling terhubung secara terintegrasi dengan kecerdasan buatan dan pemrosesan awan (Cloud).</p>
+                    </div>
+                </div>
+
+                <!-- Interaksi 3: Mengurutkan Perkembangan -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="px-2.5 py-1 bg-indigo-600 text-white font-bold text-xs rounded-lg">Interaksi 3</span>
+                        <h3 class="font-bold text-sky-950 text-sm md:text-base">Susun Perkembangan Perangkat Komunikasi!</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4">Urutkan 3 perangkat berikut dari teknologi yang **LEBIH AWAL** menuju **LEBIH MODERN** (Gunakan tombol panah):</p>
+
+                    <div class="space-y-3" id="ordering-list">
+                        <!-- Reorderable Items populated by JS -->
+                    </div>
+
+                    <div class="mt-4 flex space-x-3">
+                        <button onclick="checkOrdering()" class="btn-action px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs">
+                            Cek Urutan
+                        </button>
+                    </div>
+
+                    <div id="feedback-interaksi3" class="hidden mt-4 p-4 rounded-xl text-xs md:text-sm font-medium"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 8: EKSPLORASI SITUASI (INTERAKSI 4) ================= -->
+        <section id="step-8" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="mb-6">
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Modul 05 / Interaksi 4</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-2">Eksplorasi Situasi Kehidupan Nyata</h2>
+                    <p class="text-sm text-slate-600 mt-1">Pilihlah solusi perangkat TIK yang paling tepat untuk menangani situasi di bawah ini:</p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Scenario 1 -->
+                    <div class="bg-emerald-50/60 border border-emerald-200 p-5 rounded-2xl">
+                        <h3 class="font-bold text-emerald-950 text-base mb-2">
+                            <i class="fa-solid fa-users-viewfinder mr-2 text-emerald-600"></i> Situasi 1: Presentasi Tugas Kelompok
+                        </h3>
+                        <p class="text-xs md:text-sm text-slate-700 mb-4">
+                            Kamu dan kelompokmu akan mempresentasikan slide materi Informatika di depan seluruh siswa kelas VII di ruangan kelas. Perangkat TIK utama apa yang paling tepat untuk menampilkan tampilan slide ke dinding/layar lebar?
+                        </p>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button onclick="checkSituation(1, 'A')" class="sit1-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-video text-2xl text-emerald-600 mb-1"></i> A. Proyektor
+                            </button>
+                            <button onclick="checkSituation(1, 'B')" class="sit1-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-print text-2xl text-slate-500 mb-1"></i> B. Printer
+                            </button>
+                            <button onclick="checkSituation(1, 'C')" class="sit1-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-scanner text-2xl text-slate-500 mb-1"></i> C. Scanner
+                            </button>
+                            <button onclick="checkSituation(1, 'D')" class="sit1-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-hard-drive text-2xl text-slate-500 mb-1"></i> D. Harddisk External
+                            </button>
+                        </div>
+                        <div id="feedback-sit1" class="hidden mt-3 p-3 rounded-xl text-xs font-medium"></div>
+                    </div>
+
+                    <!-- Scenario 2 (Chained) -->
+                    <div class="bg-sky-50/60 border border-sky-200 p-5 rounded-2xl">
+                        <h3 class="font-bold text-sky-950 text-base mb-2">
+                            <i class="fa-solid fa-floppy-disk mr-2 text-sky-600"></i> Situasi 2: Memindahkan File Presentasi
+                        </h3>
+                        <p class="text-xs md:text-sm text-slate-700 mb-4">
+                            Sebelum presentasi dimulai, kamu perlu membawa dan menyalin file presentasi dari komputer rumah ke komputer sekolah yang tidak tersambung ke jaringan internet. Perangkat penyimpan data portabel mana yang tepat?
+                        </p>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button onclick="checkSituation(2, 'A')" class="sit2-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-sky-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-usb text-2xl text-sky-600 mb-1"></i> A. Flashdisk
+                            </button>
+                            <button onclick="checkSituation(2, 'B')" class="sit2-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-sky-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-volume-high text-2xl text-slate-500 mb-1"></i> B. Speaker
+                            </button>
+                            <button onclick="checkSituation(2, 'C')" class="sit2-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-sky-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-microphone text-2xl text-slate-500 mb-1"></i> C. Mikrofon
+                            </button>
+                            <button onclick="checkSituation(2, 'D')" class="sit2-btn p-3 bg-white border border-slate-200 rounded-xl hover:border-sky-500 text-xs font-bold text-slate-700 flex flex-col items-center">
+                                <i class="fa-solid fa-video text-2xl text-slate-500 mb-1"></i> D. Proyektor
+                            </button>
+                        </div>
+                        <div id="feedback-sit2" class="hidden mt-3 p-3 rounded-xl text-xs font-medium"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 9: INFOGRAFIS RINGKASAN & EXPORT PDF ================= -->
+        <section id="step-9" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">Ringkasan Visual</span>
+                        <h2 class="text-2xl font-bold text-sky-950 mt-1">Infografis TIKLOPEDIA (Rasio 16:9)</h2>
+                        <p class="text-xs text-slate-500">Gunakan sebagai rangkuman visual atau unduh sebagai dokumen PDF.</p>
+                    </div>
+                    <button onclick="exportInfographicPDF()" class="btn-action bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center shadow">
+                        <i class="fa-solid fa-file-pdf mr-2 text-base"></i> Ekspor ke PDF
+                    </button>
+                </div>
+
+                <!-- Printable Infographics Container -->
+                <div id="infographic-export-area" class="space-y-8">
+                    <!-- Page 1 -->
+                    <div class="bg-gradient-to-br from-sky-500 to-sky-700 text-white p-6 md:p-8 rounded-3xl aspect-16-9 flex flex-col justify-between shadow-md relative overflow-hidden">
+                        <div class="flex justify-between items-center border-b border-sky-300/40 pb-3">
+                            <span class="text-xs uppercase tracking-widest font-extrabold text-sky-200">Halaman 1 dari 4</span>
+                            <span class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">Informatika Kelas VII</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">APA ITU PERKAKAS TIK?</h3>
+                            <p class="text-xs md:text-sm text-sky-100 leading-relaxed max-w-2xl">
+                                Perkakas TIK adalah seluruh perangkat lunak (software) dan perangkat keras (hardware) yang diciptakan untuk menerima, mengolah, menyimpan, menyampaikan, serta bertukar data/informasi dengan cepat dan akurat.
+                            </p>
+                            <div class="grid grid-cols-4 gap-3 mt-6">
+                                <div class="bg-white/10 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <i class="fa-solid fa-inbox text-2xl mb-1"></i>
+                                    <p class="text-[10px] font-bold">Menerima</p>
+                                </div>
+                                <div class="bg-white/10 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <i class="fa-solid fa-microchip text-2xl mb-1"></i>
+                                    <p class="text-[10px] font-bold">Mengolah</p>
+                                </div>
+                                <div class="bg-white/10 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <i class="fa-solid fa-database text-2xl mb-1"></i>
+                                    <p class="text-[10px] font-bold">Menyimpan</p>
+                                </div>
+                                <div class="bg-white/10 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <i class="fa-solid fa-share-nodes text-2xl mb-1"></i>
+                                    <p class="text-[10px] font-bold">Menyampaikan</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-sky-200 border-t border-sky-300/30 pt-2 flex justify-between">
+                            <span>TIKLOPEDIA - Sesi Mulyasi, M.Pd.</span>
+                            <span>Sumber: Kurikulum Merdeka Informatika SMP (2024)</span>
+                        </div>
+                    </div>
+
+                    <!-- Page 2 -->
+                    <div class="bg-gradient-to-br from-teal-600 to-teal-800 text-white p-6 md:p-8 rounded-3xl aspect-16-9 flex flex-col justify-between shadow-md relative overflow-hidden">
+                        <div class="flex justify-between items-center border-b border-teal-300/40 pb-3">
+                            <span class="text-xs uppercase tracking-widest font-extrabold text-teal-200">Halaman 2 dari 4</span>
+                            <span class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">Kategori Perangkat</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-extrabold mb-4">5 KATEGORI PERKAKAS TIK</h3>
+                            <div class="grid grid-cols-5 gap-2 text-slate-800 text-center">
+                                <div class="bg-white p-2.5 rounded-xl">
+                                    <i class="fa-solid fa-keyboard text-rose-600 text-xl"></i>
+                                    <h5 class="font-extrabold text-[11px] mt-1">INPUT</h5>
+                                    <p class="text-[9px] text-slate-500">Keyboard, Mouse</p>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl">
+                                    <i class="fa-solid fa-microchip text-amber-600 text-xl"></i>
+                                    <h5 class="font-extrabold text-[11px] mt-1">PROCESS</h5>
+                                    <p class="text-[9px] text-slate-500">CPU, Processor</p>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl">
+                                    <i class="fa-solid fa-desktop text-emerald-600 text-xl"></i>
+                                    <h5 class="font-extrabold text-[11px] mt-1">OUTPUT</h5>
+                                    <p class="text-[9px] text-slate-500">Monitor, Printer</p>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl">
+                                    <i class="fa-solid fa-hard-drive text-indigo-600 text-xl"></i>
+                                    <h5 class="font-extrabold text-[11px] mt-1">STORAGE</h5>
+                                    <p class="text-[9px] text-slate-500">SSD, Flashdisk</p>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl">
+                                    <i class="fa-solid fa-wifi text-sky-600 text-xl"></i>
+                                    <h5 class="font-extrabold text-[11px] mt-1">JARINGAN</h5>
+                                    <p class="text-[9px] text-slate-500">Router, Modem</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-teal-200 border-t border-teal-300/30 pt-2 flex justify-between">
+                            <span>TIKLOPEDIA - Ensiklopedia TIK</span>
+                            <span>Sumber: Buku Teks Utama Informatika SMP Kemendikbudristek</span>
+                        </div>
+                    </div>
+
+                    <!-- Page 3 -->
+                    <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 text-white p-6 md:p-8 rounded-3xl aspect-16-9 flex flex-col justify-between shadow-md relative overflow-hidden">
+                        <div class="flex justify-between items-center border-b border-indigo-300/40 pb-3">
+                            <span class="text-xs uppercase tracking-widest font-extrabold text-indigo-200">Halaman 3 dari 4</span>
+                            <span class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">Pemanfaatan Nyata</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-extrabold mb-3">MANFAAT TIK DALAM KEHIDUPAN</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-slate-800">
+                                <div class="bg-white p-3 rounded-xl">
+                                    <strong class="text-xs text-indigo-900 block">📱 Komunikasi</strong>
+                                    <p class="text-[10px] text-slate-600 mt-1">Interaksi jarak jauh tanpa batas waktu.</p>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl">
+                                    <strong class="text-xs text-indigo-900 block">📚 Pembelajaran</strong>
+                                    <p class="text-[10px] text-slate-600 mt-1">Akses perpustakaan & materi serba luas.</p>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl">
+                                    <strong class="text-xs text-indigo-900 block">💼 Produktivitas</strong>
+                                    <p class="text-[10px] text-slate-600 mt-1">Efisiensi pembuatan dokumen & analisis.</p>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl">
+                                    <strong class="text-xs text-indigo-900 block">🎧 Hiburan</strong>
+                                    <p class="text-[10px] text-slate-600 mt-1">Media kreatif, gim edukasi, & audio digital.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-indigo-200 border-t border-indigo-300/30 pt-2 flex justify-between">
+                            <span>TIKLOPEDIA - Sesi Mulyasi, M.Pd.</span>
+                            <span>Standar Literasi Digital Siberkreasi Indonesia</span>
+                        </div>
+                    </div>
+
+                    <!-- Page 4 -->
+                    <div class="bg-gradient-to-br from-slate-700 to-slate-900 text-white p-6 md:p-8 rounded-3xl aspect-16-9 flex flex-col justify-between shadow-md relative overflow-hidden">
+                        <div class="flex justify-between items-center border-b border-slate-600 pb-3">
+                            <span class="text-xs uppercase tracking-widest font-extrabold text-slate-400">Halaman 4 dari 4</span>
+                            <span class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">Evolusi & Etika</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-extrabold mb-2 text-amber-400">EVOLUSI TIK & ETIKA DIGITAL</h3>
+                            <p class="text-xs text-slate-300 mb-4">Evolusi: Telepon Kabel ➔ HP Monokrom ➔ Smartphone ➔ Perangkat Cerdas AI.</p>
+                            <div class="p-3 bg-white/10 rounded-xl border border-slate-600 text-xs text-slate-200">
+                                <strong>Prinsip Pemanfaatan Cerdas TIK:</strong>
+                                <ul class="list-disc pl-4 mt-1 space-y-1 text-[11px]">
+                                    <li>Gunakan perangkat secara aman dan simpan data pribadi rapat-rapat.</li>
+                                    <li>Verifikasi kebenaran informasi sebelum membagikannya (Bebas Hoaks).</li>
+                                    <li>Gunakan teknologi untuk meningkatkan produktivitas belajar, bukan sekadar hiburan.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 border-t border-slate-700 pt-2 flex justify-between">
+                            <span>TIKLOPEDIA - Media Pembelajaran SMP Kelas VII</span>
+                            <span>Kreator: Sesi Mulyasi, M.Pd.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 10: LATIHAN PEMAHAMAN (5 SOAL C1-C3) ================= -->
+        <section id="step-10" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="mb-6">
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">Latihan Formatif</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-2">Latihan Pemahaman Konsep (5 Soal)</h2>
+                    <p class="text-sm text-slate-600 mt-1">Uji pemahamanmu sebelum menghadapi evaluasi akhir. Setiap soal memberikan feedback instan.</p>
+                </div>
+
+                <div id="latihan-questions-container" class="space-y-6">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 11: EVALUASI SUMATIF (10 SOAL) ================= -->
+        <section id="step-11" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div>
+                        <span class="px-3 py-1 bg-rose-100 text-rose-800 text-xs font-bold rounded-full">Uji Kompetensi</span>
+                        <h2 class="text-2xl font-bold text-sky-950 mt-1">Evaluasi Pembelajaran TIKLOPEDIA</h2>
+                        <p class="text-xs text-slate-500">10 Soal (4 Pilihan Ganda, 2 Benar/Salah, 2 Mencocokkan, 2 Situasi)</p>
+                    </div>
+                    <div class="bg-slate-100 px-4 py-2 rounded-2xl text-xs font-bold text-slate-700">
+                        Status: <span id="eval-status" class="text-sky-600">Belum Selesai</span>
+                    </div>
+                </div>
+
+                <!-- Questions List -->
+                <div id="eval-questions-container" class="space-y-6">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mt-8 text-center">
+                    <button onclick="submitEvaluation()" class="btn-action bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white font-extrabold px-8 py-3.5 rounded-2xl text-base shadow-lg">
+                        SELESAIKAN EVALUASI & LIHAT HASIL
+                    </button>
+                </div>
+
+                <!-- Result Modal / Card -->
+                <div id="eval-result-card" class="hidden mt-8 p-6 rounded-3xl bg-gradient-to-br from-sky-50 to-teal-50 border-2 border-sky-300 text-center">
+                    <h3 class="text-2xl font-extrabold text-sky-950 mb-2">Laporan Hasil Evaluasi</h3>
+                    <p class="text-xs text-slate-600 mb-6">Berikut adalah pencapaian pemahaman materi TIK kamu:</p>
+
+                    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto mb-6">
+                        <div class="bg-white p-4 rounded-2xl border border-sky-100 shadow-sm">
+                            <span class="text-2xl font-black text-emerald-600 block" id="score-correct">0</span>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Benar</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-sky-100 shadow-sm">
+                            <span class="text-2xl font-black text-rose-600 block" id="score-wrong">0</span>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Salah</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-sky-100 shadow-sm">
+                            <span class="text-2xl font-black text-sky-600 block" id="score-percent">0%</span>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Nilai Akhir</span>
+                        </div>
+                    </div>
+
+                    <div id="eval-strengthening-msg" class="p-4 bg-white rounded-2xl border border-sky-200 text-xs md:text-sm text-sky-900 font-semibold max-w-xl mx-auto mb-6">
+                        <!-- Custom feedback reinforcement -->
+                    </div>
+
+                    <button onclick="goToStep(12)" class="btn-action bg-teal-600 hover:bg-teal-700 text-white font-bold px-6 py-3 rounded-xl text-sm">
+                        Lanjut ke Refleksi <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 12: REFLEKSI SISWA ================= -->
+        <section id="step-12" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-sky-100 card-shadow">
+                <div class="max-w-2xl mx-auto">
+                    <span class="px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold rounded-full">Refleksi Diri</span>
+                    <h2 class="text-2xl font-bold text-sky-950 mt-2 mb-2">Bagaimana Pengalaman Belajarmu?</h2>
+                    <p class="text-xs text-slate-500 mb-6">Pilih emotikon yang menggambarkan tingkat pemahamanmu terhadap Perkakas TIK:</p>
+
+                    <!-- Mood Selector -->
+                    <div class="grid grid-cols-3 gap-4 mb-8">
+                        <button onclick="selectReflectMood('paham')" class="mood-btn p-4 rounded-2xl border-2 border-slate-200 hover:border-teal-500 text-center transition-all">
+                            <span class="text-4xl block mb-2">😊</span>
+                            <strong class="text-xs text-slate-800 block">Saya Sudah Memahami</strong>
+                        </button>
+                        <button onclick="selectReflectMood('cukup')" class="mood-btn p-4 rounded-2xl border-2 border-slate-200 hover:border-amber-500 text-center transition-all">
+                            <span class="text-4xl block mb-2">🙂</span>
+                            <strong class="text-xs text-slate-800 block">Saya Cukup Memahami</strong>
+                        </button>
+                        <button onclick="selectReflectMood('belajar')" class="mood-btn p-4 rounded-2xl border-2 border-slate-200 hover:border-rose-500 text-center transition-all">
+                            <span class="text-4xl block mb-2">🤔</span>
+                            <strong class="text-xs text-slate-800 block">Perlu Belajar Lagi</strong>
+                        </button>
+                    </div>
+
+                    <!-- Reflection Prompt Questions -->
+                    <div class="space-y-4 text-left">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">1. Hal baru apa yang paling berkesan kamu pelajari hari ini?</label>
+                            <textarea id="ref-1" class="w-full p-3 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none" rows="2" placeholder="Tuliskan jawaban singkatmu..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">2. Perangkat TIK apa yang paling sering kamu gunakan sehari-hari?</label>
+                            <input id="ref-2" type="text" class="w-full p-3 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none" placeholder="Contoh: Smartphone untuk belajar & berkirim pesan">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">3. Bagaimana caramu menggunakan TIK secara aman dan bertanggung jawab?</label>
+                            <textarea id="ref-3" class="w-full p-3 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none" rows="2" placeholder="Tuliskan komitmen bijak berteknologi..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-teal-50 border border-teal-200 p-4 rounded-2xl text-xs text-teal-900 font-semibold text-center">
+                        <i class="fa-solid fa-quote-left mr-2 text-teal-600"></i>
+                        "Belajar teknologi bukan hanya tentang menggunakan perangkat, tetapi juga memahami fungsi dan menggunakannya secara bijak."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 13: PENUTUP ================= -->
+        <section id="step-13" class="page-step hidden">
+            <div class="bg-white rounded-3xl p-8 md:p-12 border border-sky-100 card-shadow text-center">
+                <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-sky-500 to-teal-500 text-white flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <h2 class="text-3xl font-extrabold text-sky-950 mb-3">Selamat! Pembelajaran Selesai!</h2>
+                <p class="text-slate-600 text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-8">
+                    Kamu telah menyelesaikan seluruh eksplorasi modul <strong>TIKLOPEDIA (Ensiklopedia TIK)</strong>. Semoga pemahamanmu tentang teknologi semakin matang dan menginspirasi penggunaan yang bijak dalam kehidupan sehari-hari!
+                </p>
+
+                <div class="bg-slate-50 border border-slate-200 p-6 rounded-2xl max-w-md mx-auto text-left text-xs mb-8 space-y-2">
+                    <div class="flex justify-between border-b border-slate-200 pb-2">
+                        <span class="text-slate-500">Mata Pelajaran:</span>
+                        <strong class="text-slate-800">Informatika SMP</strong>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-200 pb-2">
+                        <span class="text-slate-500">Materi Utama:</span>
+                        <strong class="text-slate-800">Perkakas TIK & Perkembangannya</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Pengembang Media:</span>
+                        <strong class="text-sky-700">Sesi Mulyasi, M.Pd.</strong>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="goToStep(0)" class="btn-action bg-sky-600 hover:bg-sky-700 text-white font-extrabold px-6 py-3 rounded-2xl text-sm shadow">
+                        <i class="fa-solid fa-rotate-left mr-2"></i> Ulangi Dari Awal
+                    </button>
+                    <button onclick="goToStep(9)" class="btn-action bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-6 py-3 rounded-2xl text-sm shadow">
+                        <i class="fa-solid fa-file-pdf mr-2"></i> Lihat / Unduh Infografis
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- GLOBAL FOOTER NAVIGATION (Consistently present across all learning steps) -->
+    <footer class="bg-white border-t border-sky-100 py-3 px-4 sticky bottom-0 z-30 shadow-md">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <button id="btn-prev" onclick="prevStep()" class="btn-nav bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm transition-all border border-slate-300">
+                <i class="fa-solid fa-chevron-left mr-2"></i> ← Sebelumnya
+            </button>
+
+            <span id="footer-step-indicator" class="text-xs font-semibold text-slate-500 hidden sm:inline">
+                TIKLOPEDIA | Moda Eksplorasi Interaktif
+            </span>
+
+            <button id="btn-next" onclick="nextStep()" class="btn-nav bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm transition-all shadow">
+                Berikutnya → <i class="fa-solid fa-chevron-right ml-2"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        let currentStep = 0;
+        const totalSteps = 14; // 0 to 13
+
+        // Step titles for linear progress tracker
+        const stepTitles = [
+            "Opening / Laman Muka",
+            "Panduan Penggunaan",
+            "Menu Utama Peta Belajar",
+            "Pertanyaan Pemantik",
+            "Modul 01: Mengenal Perkakas TIK",
+            "Modul 02: Jenis-Jenis Perkakas",
+            "Modul 03: Fungsi & Manfaat TIK",
+            "Modul 04: Perkembangan TIK",
+            "Modul 05: Eksplorasi Situasi",
+            "Infografis Ringkasan",
+            "Latihan Pemahaman",
+            "Evaluasi Pembelajaran",
+            "Refleksi Diri",
+            "Penutup"
+        ];
+
+        // Devices Data for Materi 1
+        const devicesData = [
+            { id: 'laptop', name: 'Laptop', icon: 'fa-laptop', desc: 'Digunakan untuk mengolah informasi, belajar, bekerja, membuat dokumen, mengakses internet, dan menjalankan aplikasi secara portabel.' },
+            { id: 'komputer', name: 'Komputer PC', icon: 'fa-desktop', desc: 'Sistem komputasi meja dengan performa tinggi untuk pemrosesan data berat, pemrograman, dan desain grafis.' },
+            { id: 'smartphone', name: 'Smartphone', icon: 'fa-mobile-screen-button', desc: 'Perangkat komunikasi pintar serbaguna untuk panggilan, kirim pesan, akses media sosial, dan aplikasi harian.' },
+            { id: 'tablet', name: 'Tablet', icon: 'fa-tablet-screen-button', desc: 'Perangkat layar sentuh berukuran sedang yang nyaman untuk membaca buku digital, menggambar, dan belajar interaktif.' },
+            { id: 'printer', name: 'Printer', icon: 'fa-print', desc: 'Mencetak dokumen digital dari komputer menjadi lembaran fisik di atas kertas.' },
+            { id: 'kamera', name: 'Kamera Digital', icon: 'fa-camera', desc: 'Mengambil, merekam, dan mengabadikan momen berupa gambar statis maupun video digital.' },
+            { id: 'proyektor', name: 'Proyektor', icon: 'fa-video', desc: 'Menampilkan sinyal gambar/video dari komputer ke layar lebar atau dinding saat presentasi.' },
+            { id: 'speaker', name: 'Speaker', icon: 'fa-volume-high', desc: 'Menghasilkan sinyal keluaran berupa suara atau audio yang dapat didengar secara jelas.' },
+            { id: 'mikrofon', name: 'Mikrofon', icon: 'fa-microphone', desc: 'Mengubah gelombang suara manusia menjadi sinyal sinyal listrik masukan bagi sistem komputer.' },
+            { id: 'router', name: 'Router Wi-Fi', icon: 'fa-wifi', desc: 'Menghubungkan dan membagikan jaringan internet ke berbagai perangkat digital melalui jaringan nirkabel.' }
+        ];
+
+        // Challenge Items for Interaksi 1 (Input items)
+        const inputChallengeItems = [
+            { name: 'Keyboard', isInput: true, icon: 'fa-keyboard' },
+            { name: 'Monitor', isInput: false, icon: 'fa-desktop' },
+            { name: 'Mouse', isInput: true, icon: 'fa-mouse' },
+            { name: 'Printer', isInput: false, icon: 'fa-print' },
+            { name: 'Scanner', isInput: true, icon: 'fa-scanner' }
+        ];
+
+        // Matching Items for Interaksi 2
+        const matchData = [
+            { device: 'SMARTPHONE', function: 'Komunikasi & Panggilan', id: 1 },
+            { device: 'PRINTER', function: 'Mencetak Informasi Kertas', id: 2 },
+            { device: 'KAMERA', function: 'Mengambil Gambar & Video', id: 3 },
+            { device: 'SPEAKER', function: 'Menghasilkan Suara / Audio', id: 4 },
+            { device: 'PROYEKTOR', function: 'Menampilkan Layar Presentasi', id: 5 }
+        ];
+        let selectedMatchDevice = null;
+        let matchedPairsCount = 0;
+
+        // Ordering Items for Interaksi 3
+        let orderItems = [
+            { id: 2, text: 'Telepon Seluler (HP Monokrom)', order: 2, icon: 'fa-mobile' },
+            { id: 1, text: 'Telepon Kabel Analog', order: 1, icon: 'fa-phone' },
+            { id: 3, text: 'Smartphone Layar Sentuh Modern', order: 3, icon: 'fa-mobile-screen-button' }
+        ];
+
+        function updateUI() {
+            // Hide all pages
+            document.querySelectorAll('.page-step').forEach(el => el.classList.add('hidden'));
+            
+            // Show current page
+            const activePage = document.getElementById(`step-${currentStep}`);
+            if (activePage) activePage.classList.remove('hidden');
+
+            // Update Progress Bar
+            const progressPercent = Math.round((currentStep / (totalSteps - 1)) * 100);
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-text').innerText = `${stepTitles[currentStep]} (${currentStep + 1}/${totalSteps})`;
+
+            // Toggle Footer button states
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+
+            if (currentStep === 0) {
+                btnPrev.style.visibility = 'hidden';
+            } else {
+                btnPrev.style.visibility = 'visible';
+            }
+
+            if (currentStep === totalSteps - 1) {
+                btnNext.innerText = 'Selesai ✔';
+            } else {
+                btnNext.innerHTML = 'Berikutnya → <i class="fa-solid fa-chevron-right ml-2"></i>';
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToStep(stepNum) {
+            if (stepNum >= 0 && stepNum < totalSteps) {
+                currentStep = stepNum;
+                updateUI();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        function initMenuGrid() {
+            const menuGrid = document.getElementById('menu-grid');
+            menuGrid.innerHTML = '';
+
+            const menuItems = [
+                { step: 4, title: '01. Mengenal Perkakas TIK', desc: 'Pengertian & Objek Perangkat', icon: 'fa-laptop-code', color: 'sky' },
+                { step: 5, title: '02. Jenis-Jenis Perkakas TIK', desc: 'Input, Process, Output, Storage', icon: 'fa-cubes', color: 'teal' },
+                { step: 6, title: '03. Fungsi dan Manfaat', desc: '4 Pilar Pemakai TIK', icon: 'fa-layer-group', color: 'purple' },
+                { step: 7, title: '04. Perkembangan TIK', desc: 'Timeline Dulu, Kini & Nanti', icon: 'fa-timeline', color: 'indigo' },
+                { step: 8, title: '05. TIK dalam Kehidupan', desc: 'Eksplorasi Situasi Nyata', icon: 'fa-city', color: 'emerald' },
+                { step: 9, title: '06. Infografis Visual', desc: 'Ringkasan & Unduh PDF', icon: 'fa-file-pdf', color: 'amber' },
+                { step: 10, title: '07. Latihan Pemahaman', desc: '5 Soal Format Latihan', icon: 'fa-pen-to-square', color: 'orange' },
+                { step: 11, title: '08. Evaluasi Pembelajaran', desc: 'Uji Kompetensi Sumatif', icon: 'fa-clipboard-check', color: 'rose' },
+                { step: 12, title: '09. Refleksi Diri', desc: 'Umpan Balik Belajar Siswa', icon: 'fa-heart', color: 'pink' }
+            ];
+
+            menuItems.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl bg-white border border-slate-200 card-shadow-hover cursor-pointer transition-all flex items-start space-x-3`;
+                card.onclick = () => goToStep(item.step);
+                card.innerHTML = `
+                    <div class="w-10 h-10 rounded-xl bg-${item.color}-100 text-${item.color}-600 flex items-center justify-center font-bold flex-shrink-0">
+                        <i class="fa-solid ${item.icon}"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sky-950 text-sm">${item.title}</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">${item.desc}</p>
+                    </div>
+                `;
+                menuGrid.appendChild(card);
+            });
+        }
+
+        function checkPemantik(selectedIndex) {
+            const feedbackBox = document.getElementById('feedback-pemantik');
+            feedbackBox.classList.remove('hidden', 'bg-emerald-50', 'bg-rose-50', 'border-emerald-200', 'border-rose-200', 'text-emerald-900', 'text-rose-900');
+
+            if (selectedIndex === 0) {
+                feedbackBox.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                feedbackBox.innerHTML = `
+                    <div class="flex items-start space-x-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-lg mt-0.5"></i>
+                        <div>
+                            <strong>✓ Jawabanmu Sangat Tepat!</strong>
+                            <p class="mt-1">Perkakas TIK sangat membantu manusia mencari, mengolah, menyimpan, dan menyampaikan informasi dengan jauh lebih mudah dan cepat. Tanpanya, akses informasi terbatas.</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                feedbackBox.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+                feedbackBox.innerHTML = `
+                    <div class="flex items-start space-x-2">
+                        <i class="fa-solid fa-circle-xmark text-rose-600 text-lg mt-0.5"></i>
+                        <div>
+                            <strong>! Coba Pertimbangkan Kembali</strong>
+                            <p class="mt-1">Tanpa perkakas TIK, komunikasi dan pencarian informasi akan membutuhkan waktu jauh lebih lama dan tenaga ekstra.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function initMateri1Grid() {
+            const container = document.getElementById('materi1-grid');
+            container.innerHTML = '';
+
+            devicesData.forEach((dev) => {
+                const btn = document.createElement('button');
+                btn.className = `p-3 rounded-2xl bg-white border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all flex flex-col items-center justify-center text-center`;
+                btn.onclick = () => selectDeviceMateri1(dev);
+                btn.innerHTML = `
+                    <i class="fa-solid ${dev.icon} text-3xl text-sky-600 mb-2"></i>
+                    <span class="text-xs font-bold text-slate-800">${dev.name}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectDeviceMateri1(device) {
+            document.getElementById('device-icon').className = `fa-solid ${device.icon}`;
+            document.getElementById('device-name').innerText = device.name;
+            document.getElementById('device-desc').innerText = device.desc;
+        }
+
+        function initInteraksi1() {
+            const container = document.getElementById('input-challenge-grid');
+            container.innerHTML = '';
+
+            inputChallengeItems.forEach((item) => {
+                const btn = document.createElement('button');
+                btn.className = `p-3 bg-white rounded-xl border border-slate-200 hover:border-amber-400 font-bold text-xs flex flex-col items-center justify-center`;
+                btn.onclick = () => checkInteraksi1(item, btn);
+                btn.innerHTML = `
+                    <i class="fa-solid ${item.icon} text-2xl text-slate-700 mb-1"></i>
+                    <span>${item.name}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function checkInteraksi1(item, element) {
+            const feedback = document.getElementById('feedback-interaksi1');
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+            if (item.isInput) {
+                feedback.classList.add('bg-emerald-100', 'text-emerald-900');
+                feedback.innerHTML = `✓ <strong>Benar!</strong> ${item.name} adalah perangkat INPUT karena berfungsi memasukkan data/perintah ke dalam sistem komputer.`;
+            } else {
+                feedback.classList.add('bg-rose-100', 'text-rose-900');
+                feedback.innerHTML = `! <strong>Belum Tepat.</strong> ${item.name} bukan alat input. Alat input digunakan khusus untuk memasukkan instruksi atau data dari luar ke komputer.`;
+            }
+        }
+
+        function initInteraksi2() {
+            const devContainer = document.getElementById('match-devices');
+            const funcContainer = document.getElementById('match-functions');
+            devContainer.innerHTML = '';
+            funcContainer.innerHTML = '';
+
+            matchData.forEach((item) => {
+                const btnDev = document.createElement('button');
+                btnDev.className = `match-dev-btn w-full p-3 bg-white border border-slate-200 rounded-xl text-left text-xs font-bold text-slate-800 hover:bg-purple-50 transition-all`;
+                btnDev.dataset.id = item.id;
+                btnDev.innerText = item.device;
+                btnDev.onclick = () => selectMatchDev(btnDev, item.id);
+                devContainer.appendChild(btnDev);
+            });
+
+            // Shuffle functions
+            const shuffledFuncs = [...matchData].sort(() => Math.random() - 0.5);
+            shuffledFuncs.forEach((item) => {
+                const btnFunc = document.createElement('button');
+                btnFunc.className = `match-func-btn w-full p-3 bg-white border border-slate-200 rounded-xl text-left text-xs font-bold text-slate-800 hover:bg-purple-50 transition-all`;
+                btnFunc.dataset.id = item.id;
+                btnFunc.innerText = item.function;
+                btnFunc.onclick = () => selectMatchFunc(btnFunc, item.id);
+                funcContainer.appendChild(btnFunc);
+            });
+        }
+
+        function selectMatchDev(element, id) {
+            document.querySelectorAll('.match-dev-btn').forEach(b => b.classList.remove('border-purple-600', 'bg-purple-100'));
+            element.classList.add('border-purple-600', 'bg-purple-100');
+            selectedMatchDevice = id;
+        }
+
+        function selectMatchFunc(element, id) {
+            const feedback = document.getElementById('feedback-interaksi2');
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+            if (!selectedMatchDevice) {
+                feedback.classList.add('bg-rose-100', 'text-rose-900');
+                feedback.innerHTML = `! Pilih perangkat di kolom sebelah kiri terlebih dahulu!`;
+                return;
+            }
+
+            if (selectedMatchDevice === id) {
+                feedback.classList.add('bg-emerald-100', 'text-emerald-900');
+                feedback.innerHTML = `✓ <strong>Benar!</strong> Pasangan tepat. Perangkat ini menjalankan fungsi tersebut.`;
+            } else {
+                feedback.classList.add('bg-rose-100', 'text-rose-900');
+                feedback.innerHTML = `! <strong>Belum Tepat.</strong> Fungsi yang kamu pilih kurang sesuai dengan perangkat tersebut. Coba lagi!`;
+            }
+        }
+
+        function renderOrderingList() {
+            const container = document.getElementById('ordering-list');
+            container.innerHTML = '';
+
+            orderItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs font-bold text-slate-800`;
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid ${item.icon} text-indigo-600 text-base"></i>
+                        <span>${item.text}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="moveOrder(${index}, -1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold">▲</button>
+                        <button onclick="moveOrder(${index}, 1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold">▼</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function moveOrder(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex >= 0 && newIndex < orderItems.length) {
+                const temp = orderItems[index];
+                orderItems[index] = orderItems[newIndex];
+                orderItems[newIndex] = temp;
+                renderOrderingList();
+            }
+        }
+
+        function checkOrdering() {
+            const feedback = document.getElementById('feedback-interaksi3');
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+            let isCorrect = true;
+            for (let i = 0; i < orderItems.length; i++) {
+                if (orderItems[i].order !== i + 1) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                feedback.classList.add('bg-emerald-100', 'text-emerald-900');
+                feedback.innerHTML = `✓ <strong>Hebat!</strong> Urutan sangat tepat: Telepon Kabel ➔ Telepon Seluler ➔ Smartphone Modern!`;
+            } else {
+                feedback.classList.add('bg-rose-100', 'text-rose-900');
+                feedback.innerHTML = `! <strong>Belum Tepat.</strong> Perhatikan kembali perkembangan teknologi dari era kabel lama menuju teknologi tanpa kabel & pintar.`;
+            }
+        }
+
+        function checkSituation(situationNum, option) {
+            const feedback = document.getElementById(`feedback-sit${situationNum}`);
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+            if (situationNum === 1) {
+                if (option === 'A') {
+                    feedback.classList.add('bg-emerald-100', 'text-emerald-900');
+                    feedback.innerHTML = `✓ <strong>Tepat Sekali!</strong> Proyektor adalah perangkat output yang tepat untuk memancarkan materi presentasi dari laptop ke layar kelas.`;
+                } else {
+                    feedback.classList.add('bg-rose-100', 'text-rose-900');
+                    feedback.innerHTML = `! <strong>Belum Tepat.</strong> Alat tersebut tidak dapat memancarkan tampilan slide visual secara langsung ke dinding kelas.`;
+                }
+            } else if (situationNum === 2) {
+                if (option === 'A') {
+                    feedback.classList.add('bg-emerald-100', 'text-emerald-900');
+                    feedback.innerHTML = `✓ <strong>Tepat Sekali!</strong> Flashdisk adalah media penyimpanan data praktis (storage device) yang mudah dibawa ke mana saja.`;
+                } else {
+                    feedback.classList.add('bg-rose-100', 'text-rose-900');
+                    feedback.innerHTML = `! <strong>Belum Tepat.</strong> Alat tersebut bukan media penyimpanan file digital secara luring (offline).`;
+                }
+            }
+        }
+
+        const latihanQuestions = [
+            {
+                q: "1. Perangkat keras yang digunakan khusus untuk memasukkan data suara manusia ke komputer adalah...",
+                options: ["Speaker", "Mikrofon", "Monitor", "Printer"],
+                correct: 1,
+                explanation: "Mikrofon merupakan perangkat input yang menangkap getaran suara dan mengubahnya menjadi sinyal digital masukan."
+            },
+            {
+                q: "2. Alat keluaran (output) yang menghasilkan cetakan fisik di atas kertas disebut...",
+                options: ["Scanner", "Plotter / Printer", "Keyboard", "Router"],
+                correct: 1,
+                explanation: "Printer bertugas mencetak informasi digital dokumen menjadi wujud kertas cetak."
+            },
+            {
+                q: "3. Manakah di bawah ini yang tergolong perangkat penyimpanan data (Storage Device)?",
+                options: ["Flashdisk & SSD", "Processor & RAM", "Mouse & Webcam", "Speaker & Proyektor"],
+                correct: 0,
+                explanation: "Flashdisk dan SSD dirancang untuk menyimpan file dan dokumen pengguna."
+            },
+            {
+                q: "4. Fungsi utama dari perangkat Router Wi-Fi dalam sistem TIK adalah...",
+                options: ["Menghasilkan suara audio", "Menghubungkan & membagikan jaringan internet", "Mengedit video", "Mencetak kertas"],
+                correct: 1,
+                explanation: "Router membagikan koneksi internet ke berbagai perangkat terhubung."
+            },
+            {
+                q: "5. Mengapa Smartphone dikatakan sebagai perangkat TIK serbaguna?",
+                options: ["Karena harganya mahal", "Karena hanya memiliki satu fungsi tunggal", "Karena menggabungkan fungsi komunikasi, hiburan, dan produktivitas sekaligus", "Karena ukurannya paling besar"],
+                correct: 2,
+                explanation: "Smartphone memiliki kemampuan multi-fungsi mencakup komunikasi, komputasi, dan hiburan."
+            }
+        ];
+
+        function initLatihan() {
+            const container = document.getElementById('latihan-questions-container');
+            container.innerHTML = '';
+
+            latihanQuestions.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl bg-slate-50 border border-slate-200`;
+                
+                let optionsHTML = '';
+                item.options.forEach((opt, optIdx) => {
+                    optionsHTML += `
+                        <button onclick="answerLatihan(${index}, ${optIdx})" class="lat-opt-${index} w-full text-left p-3 rounded-xl bg-white border border-slate-200 hover:border-amber-400 font-medium text-xs my-1 transition-all">
+                            ${opt}
+                        </button>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <h4 class="font-bold text-sky-950 text-sm mb-3">${item.q}</h4>
+                    <div class="space-y-1">${optionsHTML}</div>
+                    <div id="lat-feedback-${index}" class="hidden mt-3 p-3 rounded-xl text-xs"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function answerLatihan(qIdx, optIdx) {
+            const item = latihanQuestions[qIdx];
+            const feedback = document.getElementById(`lat-feedback-${qIdx}`);
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+            if (optIdx === item.correct) {
+                feedback.classList.add('bg-emerald-100', 'text-emerald-900');
+                feedback.innerHTML = `✓ <strong>Jawabanmu Tepat!</strong> ${item.explanation}`;
+            } else {
+                feedback.classList.add('bg-rose-100', 'text-rose-900');
+                feedback.innerHTML = `! <strong>Belum Tepat.</strong> ${item.explanation}`;
+            }
+        }
+
+        const evalQuestions = [
+            { id: 1, type: 'mc', question: "1. Pengertian perkakas TIK yang paling tepat di bawah ini adalah...", choices: ["Perangkat untuk membuat meja belajar", "Perangkat yang digunakan untuk menerima, mengolah, menyimpan, & menyampaikan informasi", "Alat elektronik khusus untuk bermain gim saja", "Alat penerangan ruangan"], correct: 1 },
+            { id: 2, type: 'mc', question: "2. Manakah kombinasi perangkat di bawah ini yang semuanya termasuk alat INPUT?", choices: ["Keyboard, Mouse, Mikrofon", "Monitor, Printer, Speaker", "Harddisk, SSD, Flashdisk", "Router, CPU, Proyektor"], correct: 0 },
+            { id: 3, type: 'mc', question: "3. Alat yang berfungsi mengolah instruksi utama dalam komputer adalah...", choices: ["Monitor", "CPU / Processor", "Printer", "Keyboard"], correct: 1 },
+            { id: 4, type: 'mc', question: "4. Saat guru ingin menampilkan video materi di layar dinding kelas, perangkat TIK yang digunakan adalah...", choices: ["Proyektor", "Scanner", "Harddisk", "Keyboard"], correct: 0 },
+            { id: 5, type: 'tf', question: "5. [Benar/Salah] Speaker adalah contoh dari perangkat penyimpanan data (Storage Device).", choices: ["BENAR", "SALAH"], correct: 1 },
+            { id: 6, type: 'tf', question: "6. [Benar/Salah] Perkembangan TIK membuat ukuran fisik perangkat cenderung makin praktis dan multifungsi.", choices: ["BENAR", "SALAH"], correct: 0 },
+            { id: 7, type: 'match', question: "7. Perangkat TIK yang bertugas membaca dokumen cetak menjadi file gambar/PDF digital adalah...", choices: ["Printer", "Scanner", "Speaker", "Monitor"], correct: 1 },
+            { id: 8, type: 'match', question: "8. Kartu memori (Memory Card) dan Flashdisk dikelompokkan ke dalam kategori...", choices: ["Perangkat Input", "Perangkat Output", "Perangkat Storage (Penyimpanan)", "Perangkat Jaringan"], correct: 2 },
+            { id: 9, type: 'sit', question: "9. [Situasi] Kamu hendak membackup file foto tugas sekolah agar aman dari kerusakan laptop. Perangkat terbaik adalah...", choices: ["Headset", "External Harddisk / Cloud Storage", "Printer", "Mikrofon"], correct: 1 },
+            { id: 10, type: 'sit', question: "10. [Situasi] Sikap bijak dan bertanggung jawab saat menerima berita di media digital adalah...", choices: ["Langsung membagikan tanpa dibaca", "Memeriksa kebenaran informasi sebelum membagikan", "Mengabaikan tugas sekolah", "Mengisi daya telepon berlebihan"], correct: 1 }
+        ];
+
+        let userEvalAnswers = {};
+
+        function initEvaluation() {
+            const container = document.getElementById('eval-questions-container');
+            container.innerHTML = '';
+
+            evalQuestions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl bg-slate-50 border border-slate-200`;
+
+                let choicesHTML = '';
+                q.choices.forEach((c, cIdx) => {
+                    choicesHTML += `
+                        <label class="flex items-center space-x-3 p-3 rounded-xl bg-white border border-slate-200 cursor-pointer hover:bg-sky-50 transition-all text-xs font-semibold my-1">
+                            <input type="radio" name="eval-q-${idx}" value="${cIdx}" onchange="recordEvalAnswer(${idx}, ${cIdx})" class="text-sky-600 focus:ring-sky-400">
+                            <span>${c}</span>
+                        </label>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <h4 class="font-bold text-sky-950 text-sm mb-2">${q.question}</h4>
+                    <div class="space-y-1">${choicesHTML}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function recordEvalAnswer(qIdx, choiceIdx) {
+            userEvalAnswers[qIdx] = choiceIdx;
+        }
+
+        function submitEvaluation() {
+            let correctCount = 0;
+            evalQuestions.forEach((q, idx) => {
+                if (userEvalAnswers[idx] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const wrongCount = evalQuestions.length - correctCount;
+            const percent = Math.round((correctCount / evalQuestions.length) * 100);
+
+            document.getElementById('score-correct').innerText = correctCount;
+            document.getElementById('score-wrong').innerText = wrongCount;
+            document.getElementById('score-percent').innerText = `${percent}%`;
+
+            const msgBox = document.getElementById('eval-strengthening-msg');
+            if (percent >= 80) {
+                msgBox.innerText = "Luar biasa! Kamu sangat menguasai konsep Perkakas TIK, jenis, fungsi, dan penggunaannya!";
+            } else if (percent >= 60) {
+                msgBox.innerText = "Bagus! Kamu sudah memahami sebagian besar materi TIKLOPEDIA. Periksa kembali beberapa poin jenis dan fungsi perangkat.";
+            } else {
+                msgBox.innerText = "Pembelajaran selesai! Periksa kembali materi tentang jenis dan fungsi perangkat TIK untuk memperkuat pemahamanmu.";
+            }
+
+            document.getElementById('eval-status').innerText = "Selesai ✔";
+            document.getElementById('eval-status').className = "text-emerald-600 font-bold";
+            document.getElementById('eval-result-card').classList.remove('hidden');
+
+            window.scrollTo({ top: document.getElementById('eval-result-card').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function selectReflectMood(mood) {
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('border-teal-500', 'bg-teal-50'));
+            event.currentTarget.classList.add('border-teal-500', 'bg-teal-50');
+        }
+
+        async function exportInfographicPDF() {
+            const element = document.getElementById('infographic-export-area');
+            const btn = event.currentTarget;
+            btn.innerText = 'Memproses PDF...';
+
+            try {
+                const canvas = await html2canvas(element, { scale: 1.5 });
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('landscape', 'pt', 'a4');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('TIKLOPEDIA_Infografis_TIK.pdf');
+                btn.innerHTML = '<i class="fa-solid fa-file-pdf mr-2 text-base"></i> Ekspor ke PDF';
+            } catch (err) {
+                alert('Gagal mengekspor PDF. Pastikan koneksi internet stabil untuk pustaka PDF.');
+                btn.innerHTML = '<i class="fa-solid fa-file-pdf mr-2 text-base"></i> Ekspor ke PDF';
+            }
+        }
+
+        window.onload = function () {
+            initMenuGrid();
+            initMateri1Grid();
+            initInteraksi1();
+            initInteraksi2();
+            renderOrderingList();
+            initLatihan();
+            initEvaluation();
+            updateUI();
+        };
+    </script>
+</body>
+</html>
